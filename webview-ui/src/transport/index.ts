@@ -1,10 +1,16 @@
 import type { ServerMessage } from '../../../core/src/messages.js';
-import { isBrowserRuntime } from '../runtime.js';
+import { isAgencyEmbed, isBrowserRuntime } from '../runtime.js';
+import { HostBridgeTransport } from './hostBridgeTransport.js';
 import { PostMessageTransport } from './postMessageTransport.js';
 import type { MessageTransport } from './types.js';
 import { WebSocketTransport } from './webSocketTransport.js';
 
 function createTransport(): MessageTransport {
+  // Pixel Agency app: the host (React Native WebView / iframe parent) drives
+  // the office directly; there is no Pixel Agents server to connect to.
+  if (isAgencyEmbed) {
+    return new HostBridgeTransport();
+  }
   if (!isBrowserRuntime) {
     return new PostMessageTransport();
   }

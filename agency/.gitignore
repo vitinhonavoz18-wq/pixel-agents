@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-office/
+.expo/
+web-build/
+app/dist/
+backend/data/
+backend/workspaces/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

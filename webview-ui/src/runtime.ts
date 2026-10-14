@@ -16,6 +16,17 @@ const runtime: Runtime = typeof acquireVsCodeApi !== 'undefined' ? 'vscode' : 'b
 export const isBrowserRuntime = runtime === 'browser';
 
 /**
+ * True when the office is embedded by the Pixel Agency app (React Native
+ * WebView on Android, or an iframe on the web). The embedding host drives the
+ * office over `HostBridgeTransport` and owns everything outside the canvas, so
+ * desktop-only chrome (toolbar, hooks consent, changelog) is hidden. Set by
+ * `src/agency/embedFlag.ts` before any other module evaluates.
+ */
+export const isAgencyEmbed: boolean =
+  typeof window !== 'undefined' &&
+  (window as unknown as { __PIXEL_AGENCY_EMBED__?: boolean }).__PIXEL_AGENCY_EMBED__ === true;
+
+/**
  * True only under the Playwright e2e harness, which sets `__PIXEL_AGENTS_E2E`
  * via `addInitScript` before any app code runs (so it's set in every frame,
  * including the VS Code webview iframe). Gates test-only diagnostics

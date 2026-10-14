@@ -1,0 +1,27 @@
+{
+  "name": "pixel-agency",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PIXEL AGENCY — virtual AI agency (Android, tablet, Web) built on Pixel Agents",
+  "license": "MIT",
+  "workspaces": [
+    "shared",
+    "backend",
+    "desktop-bridge",
+    "app"
+  ],
+  "scripts": {
+    "office:layout": "tsx office-layout/generateAgencyLayout.ts",
+    "office:build": "npm run office:layout && npm --prefix ../webview-ui exec -- vite build --config vite.agency.config.ts && node app/scripts/embed-office.mjs",
+    "typecheck": "npm run typecheck -w shared -w backend -w desktop-bridge -w app",
+    "test": "npm test -w shared -w backend -w desktop-bridge",
+    "backend:dev": "npm run dev -w backend",
+    "backend:build": "npm run build -w backend",
+    "web:build": "npm run build:web -w app"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.10"
+  }
+}
