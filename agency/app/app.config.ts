@@ -8,6 +8,7 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 const base: ExpoConfig = {
   name: 'PIXEL AGENCY',
   slug: 'pixel-agency',
+  owner: 'vitinho157s-team',
   scheme: 'pixelagency',
   version: '1.0.0',
   orientation: 'default',
