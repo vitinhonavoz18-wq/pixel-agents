@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { AgencyEmbedToolbar } from './agency/AgencyEmbedToolbar.js';
 import { toMajorMinor } from './changelogData.js';
 import { BottomToolbar } from './components/BottomToolbar.js';
 import { ChangelogModal } from './components/ChangelogModal.js';
@@ -27,7 +28,7 @@ import { isRotatable } from './office/layout/furnitureCatalog.js';
 import { migrateLayoutColors } from './office/layout/layoutSerializer.js';
 import { getPetCount } from './office/sprites/petSpriteData.js';
 import { EditTool, type OfficeLayout } from './office/types.js';
-import { isBrowserRuntime, isE2E } from './runtime.js';
+import { isAgencyEmbed, isBrowserRuntime, isE2E } from './runtime.js';
 import { installTestHooks } from './testHooks.js';
 import { transport } from './transport/index.js';
 
@@ -54,6 +55,12 @@ function App() {
     // browserMock is for Vite dev mode only (UI prototyping without a server).
     // In standalone server mode, the server sends all state over WebSocket.
     // In VS Code mode, the extension sends all state via postMessage.
+    if (isAgencyEmbed) {
+      // Pixel Agency embed: the bundle carries its own decoded assets + agency
+      // layout (src/agency/main.tsx); deliver them once the listener is live.
+      void Promise.resolve().then(() => window.__pixelAgencyBoot?.());
+      return;
+    }
     if (isBrowserRuntime && import.meta.env.DEV) {
       void import('./browserMock.js').then(({ dispatchMockMessages }) => dispatchMockMessages());
     }
@@ -354,7 +361,9 @@ function App() {
 
       {!isDebugMode ? (
         <>
-          <ZoomControls zoom={editor.zoom} onZoomChange={editor.handleZoomChange} />
+          {!isAgencyEmbed && (
+            <ZoomControls zoom={editor.zoom} onZoomChange={editor.handleZoomChange} />
+          )}
 
           {/* Vignette overlay */}
           <div
@@ -454,30 +463,34 @@ function App() {
           message), NOT the hooksEnabled preference: hooksEnabled defaults true
           while first-run consent is still pending, and announcing "Instant
           Detection Active" before anything is installed would be a lie. */}
-      {hooksEnabled && claudeHooksInstalled && !hooksInfoShown && !hooksTooltipDismissed && (
-        <Tooltip
-          title="Instant Detection Active"
-          position="top-right"
-          onDismiss={() => {
-            setHooksTooltipDismissed(true);
-            transport.send({ type: 'setHooksInfoShown' });
-          }}
-        >
-          <span className="text-sm text-text leading-none">
-            Your agents now respond in real-time.{' '}
-            <span
-              className="text-accent cursor-pointer underline"
-              onClick={() => {
-                setIsHooksInfoOpen(true);
-                setHooksTooltipDismissed(true);
-                transport.send({ type: 'setHooksInfoShown' });
-              }}
-            >
-              View more
+      {!isAgencyEmbed &&
+        hooksEnabled &&
+        claudeHooksInstalled &&
+        !hooksInfoShown &&
+        !hooksTooltipDismissed && (
+          <Tooltip
+            title="Instant Detection Active"
+            position="top-right"
+            onDismiss={() => {
+              setHooksTooltipDismissed(true);
+              transport.send({ type: 'setHooksInfoShown' });
+            }}
+          >
+            <span className="text-sm text-text leading-none">
+              Your agents now respond in real-time.{' '}
+              <span
+                className="text-accent cursor-pointer underline"
+                onClick={() => {
+                  setIsHooksInfoOpen(true);
+                  setHooksTooltipDismissed(true);
+                  transport.send({ type: 'setHooksInfoShown' });
+                }}
+              >
+                View more
+              </span>
             </span>
-          </span>
-        </Tooltip>
-      )}
+          </Tooltip>
+        )}
 
       {/* Hooks info modal */}
       <Modal
@@ -511,23 +524,34 @@ function App() {
         </div>
       </Modal>
 
-      <BottomToolbar
-        isEditMode={editor.isEditMode}
-        onOpenClaude={editor.handleOpenClaude}
-        onToggleEditMode={editor.handleToggleEditMode}
-        isSettingsOpen={isSettingsOpen}
-        onToggleSettings={() => setIsSettingsOpen((v) => !v)}
-        workspaceFolders={workspaceFolders}
-      />
+      {isAgencyEmbed ? (
+        <AgencyEmbedToolbar
+          isEditMode={editor.isEditMode}
+          onToggleEditMode={editor.handleToggleEditMode}
+          zoom={editor.zoom}
+          onZoomChange={editor.handleZoomChange}
+        />
+      ) : (
+        <>
+          <BottomToolbar
+            isEditMode={editor.isEditMode}
+            onOpenClaude={editor.handleOpenClaude}
+            onToggleEditMode={editor.handleToggleEditMode}
+            isSettingsOpen={isSettingsOpen}
+            onToggleSettings={() => setIsSettingsOpen((v) => !v)}
+            workspaceFolders={workspaceFolders}
+          />
 
-      <VersionIndicator
-        currentVersion={extensionVersion}
-        lastSeenVersion={lastSeenVersion}
-        onDismiss={handleWhatsNewDismiss}
-        onOpenChangelog={handleOpenChangelog}
-      />
+          <VersionIndicator
+            currentVersion={extensionVersion}
+            lastSeenVersion={lastSeenVersion}
+            onDismiss={handleWhatsNewDismiss}
+            onOpenChangelog={handleOpenChangelog}
+          />
 
-      <ConnectionIndicator />
+          <ConnectionIndicator />
+        </>
+      )}
 
       <ChangelogModal
         isOpen={isChangelogOpen}
@@ -575,11 +599,11 @@ function App() {
         onImportLayout={handleImportLayout}
       />
 
-      {showMigrationNotice && (
+      {showMigrationNotice && !isAgencyEmbed && (
         <MigrationNotice onDismiss={() => setMigrationNoticeDismissed(true)} />
       )}
 
-      {intro && (
+      {intro && !isAgencyEmbed && (
         <IntroBubble
           officeState={officeState}
           headline={intro.headline}

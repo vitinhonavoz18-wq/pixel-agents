@@ -18,6 +18,7 @@ import {
   TOOL_OVERLAY_VERTICAL_OFFSET,
 } from '../../constants.js';
 import type { SubagentCharacter } from '../../hooks/useExtensionMessages.js';
+import { isAgencyEmbed } from '../../runtime.js';
 import type { OfficeState } from '../engine/officeState.js';
 import { overlayProjection } from '../projection.js';
 import type { ToolActivity } from '../types.js';
@@ -61,7 +62,8 @@ function getActivityText(
     // Find the latest non-done tool
     const activeTool = [...tools].reverse().find((t) => !t.done);
     if (activeTool) {
-      if (activeTool.permissionWait) return 'Needs approval';
+      if (activeTool.permissionWait)
+        return isAgencyEmbed ? 'Aguardando aprovação' : 'Needs approval';
       return activeTool.status;
     }
     // All tools done but agent still active (mid-turn) — keep showing last tool status
@@ -71,7 +73,7 @@ function getActivityText(
     }
   }
 
-  return 'Idle';
+  return isAgencyEmbed ? 'Ocioso' : 'Idle';
 }
 
 function getFuelColor(ratio: number): string {
@@ -203,7 +205,10 @@ export function ToolOverlay({
 
         // Team info
         const teamRoleLabel = ch.isTeamLead ? 'LEAD' : ch.agentName || null;
-        const hasExtraLines = !!(ch.folderName || teamRoleLabel);
+        // In the Pixel Agency embed the folder is a department key ("dept:x")
+        // whose Area label is already painted on the floor.
+        const folderLabel = isAgencyEmbed ? null : ch.folderName;
+        const hasExtraLines = !!(folderLabel || teamRoleLabel);
 
         // Context gauge. Every agent gets one — lead, teammate, adopted,
         // headless — as soon as it has taken a turn. Sub-agents never do: they
@@ -254,13 +259,13 @@ export function ToolOverlay({
                 >
                   {activityText}
                 </span>
-                {ch.folderName && (
+                {folderLabel && (
                   <span className="text-2xs leading-none overflow-hidden text-ellipsis block">
-                    {ch.folderName}
+                    {folderLabel}
                   </span>
                 )}
               </div>
-              {isSelected && !isSub && (
+              {isSelected && !isSub && !isAgencyEmbed && (
                 <Button
                   variant="ghost"
                   size="icon"

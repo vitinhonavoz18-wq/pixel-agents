@@ -4,6 +4,7 @@ import {
   CAMERA_FOLLOW_LERP,
   CAMERA_FOLLOW_SNAP_THRESHOLD,
   PAN_MARGIN_FRACTION,
+  TOUCH_PAN_SLOP_PX,
   ZOOM_MAX,
   ZOOM_MIN,
   ZOOM_SCROLL_THRESHOLD,
@@ -867,6 +868,153 @@ export function OfficeCanvas({
     return () => canvas.removeEventListener('wheel', handleWheel);
   }, [handleWheel]);
 
+  // ── Touch gestures (tablet / phone) ─────────────────────────────────────
+  // Normal mode: one finger drags the camera, two fingers pinch-zoom (integer
+  // zoom steps, so pixel-perfect rendering is preserved) and pan by midpoint.
+  // A tap is left alone so the browser's synthesized click selects agents.
+  // Edit mode: one finger is forwarded to the mouse handlers as a left button,
+  // so painting, placing and drag-to-move work with a fingertip.
+  const touchRef = useRef<{
+    mode: 'none' | 'pan' | 'pinch' | 'edit';
+    startX: number;
+    startY: number;
+    panX: number;
+    panY: number;
+    moved: boolean;
+    pinchDist: number;
+    pinchZoom: number;
+  }>({
+    mode: 'none',
+    startX: 0,
+    startY: 0,
+    panX: 0,
+    panY: 0,
+    moved: false,
+    pinchDist: 0,
+    pinchZoom: 0,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const asMouse = (t: Touch) =>
+      ({
+        button: 0,
+        clientX: t.clientX,
+        clientY: t.clientY,
+        preventDefault: () => {},
+      }) as unknown as React.MouseEvent;
+    const dist = (a: Touch, b: Touch) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+    const onStart = (e: TouchEvent) => {
+      unlockAudio();
+      const st = touchRef.current;
+      if (e.touches.length >= 2) {
+        e.preventDefault();
+        const [a, b] = [e.touches[0], e.touches[1]];
+        st.mode = 'pinch';
+        st.pinchDist = dist(a, b);
+        st.pinchZoom = zoom;
+        st.startX = (a.clientX + b.clientX) / 2;
+        st.startY = (a.clientY + b.clientY) / 2;
+        st.panX = panRef.current.x;
+        st.panY = panRef.current.y;
+        return;
+      }
+      const t = e.touches[0];
+      st.startX = t.clientX;
+      st.startY = t.clientY;
+      st.panX = panRef.current.x;
+      st.panY = panRef.current.y;
+      st.moved = false;
+      if (isEditMode) {
+        e.preventDefault();
+        st.mode = 'edit';
+        handleMouseDown(asMouse(t));
+      } else {
+        st.mode = 'pan';
+      }
+    };
+
+    const onMove = (e: TouchEvent) => {
+      const st = touchRef.current;
+      const dpr = window.devicePixelRatio || 1;
+      if (st.mode === 'pinch' && e.touches.length >= 2) {
+        e.preventDefault();
+        const [a, b] = [e.touches[0], e.touches[1]];
+        const ratio = dist(a, b) / Math.max(1, st.pinchDist);
+        const target = Math.round(st.pinchZoom * ratio);
+        const next = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, target));
+        if (next !== zoom) onZoomChange(next);
+        const mx = (a.clientX + b.clientX) / 2;
+        const my = (a.clientY + b.clientY) / 2;
+        officeState.cameraFollowId = null;
+        officeState.cancelGreeterCamera();
+        panRef.current = clampPan(
+          st.panX + (mx - st.startX) * dpr,
+          st.panY + (my - st.startY) * dpr,
+        );
+        return;
+      }
+      const t = e.touches[0];
+      if (!t) return;
+      if (st.mode === 'edit') {
+        e.preventDefault();
+        if (Math.hypot(t.clientX - st.startX, t.clientY - st.startY) >= TOUCH_PAN_SLOP_PX) {
+          st.moved = true;
+        }
+        handleMouseMove(asMouse(t));
+        return;
+      }
+      if (st.mode === 'pan') {
+        const dx = t.clientX - st.startX;
+        const dy = t.clientY - st.startY;
+        if (!st.moved && Math.hypot(dx, dy) < TOUCH_PAN_SLOP_PX) return;
+        e.preventDefault();
+        st.moved = true;
+        officeState.cameraFollowId = null;
+        officeState.cancelGreeterCamera();
+        panRef.current = clampPan(st.panX + dx * dpr, st.panY + dy * dpr);
+      }
+    };
+
+    const onEnd = (e: TouchEvent) => {
+      const st = touchRef.current;
+      if (st.mode === 'edit') {
+        e.preventDefault();
+        const t = e.changedTouches[0];
+        if (t) {
+          handleMouseUp(asMouse(t));
+          // preventDefault on touchstart suppressed the synthesized click.
+          if (!st.moved) handleClick(asMouse(t));
+        }
+      }
+      if (e.touches.length === 0) st.mode = 'none';
+    };
+
+    canvas.addEventListener('touchstart', onStart, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    canvas.addEventListener('touchend', onEnd, { passive: false });
+    canvas.addEventListener('touchcancel', onEnd, { passive: false });
+    return () => {
+      canvas.removeEventListener('touchstart', onStart);
+      canvas.removeEventListener('touchmove', onMove);
+      canvas.removeEventListener('touchend', onEnd);
+      canvas.removeEventListener('touchcancel', onEnd);
+    };
+  }, [
+    isEditMode,
+    zoom,
+    onZoomChange,
+    officeState,
+    panRef,
+    clampPan,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleClick,
+  ]);
+
   // Prevent default middle-click browser behavior (auto-scroll)
   const handleAuxClick = useCallback((e: React.MouseEvent) => {
     if (e.button === 1) e.preventDefault();
@@ -883,7 +1031,7 @@ export function OfficeCanvas({
         onAuxClick={handleAuxClick}
         onMouseLeave={handleMouseLeave}
         onContextMenu={handleContextMenu}
-        className="block"
+        className="block touch-none"
       />
     </div>
   );
