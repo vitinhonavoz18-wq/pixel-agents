@@ -1,0 +1,132 @@
+name: PIXEL AGENCY
+
+# Tests and builds for the agency/ monorepo (backend, app, desktop bridge),
+# plus two manual, cloud-only jobs you can trigger from a phone/tablet in the
+# GitHub UI (Actions → PIXEL AGENCY → Run workflow):
+#   - build_apk: Android APK on Expo EAS (needs repo secret EXPO_TOKEN and
+#     repo variable EAS_PROJECT_ID)
+#   - deploy_web: the web build to GitHub Pages (needs Pages enabled with
+#     "GitHub Actions" as the source)
+
+on:
+  push:
+    paths:
+      - 'agency/**'
+      - 'webview-ui/src/**'
+      - 'webview-ui/vite.agency.config.ts'
+      - '.github/workflows/agency.yml'
+  pull_request:
+    paths:
+      - 'agency/**'
+      - 'webview-ui/src/**'
+      - 'webview-ui/vite.agency.config.ts'
+      - '.github/workflows/agency.yml'
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        description: 'Gerar APK Android no Expo EAS (perfil preview)'
+        type: boolean
+        default: false
+      deploy_web:
+        description: 'Publicar a versão web no GitHub Pages'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agency-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Install root deps (office build reuses the Pixel Agents webview)
+        run: npm ci --ignore-scripts
+      - name: Install agency deps
+        working-directory: agency
+        run: npx -y npm@11 ci
+      - name: Office layout + single-file office build
+        working-directory: agency
+        run: npm run office:build
+      - name: Typecheck
+        working-directory: agency
+        run: npm run typecheck
+      - name: Tests
+        working-directory: agency
+        run: npm test
+      - name: Backend bundle
+        working-directory: agency
+        run: npm run backend:build
+      - name: Web build
+        working-directory: agency/app
+        env:
+          EXPO_BASE_URL: ${{ inputs.deploy_web && format('/{0}', github.event.repository.name) || '' }}
+        run: CI=1 npx expo export --platform web --output-dir dist && cp dist/index.html dist/404.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixel-agency-web
+          path: agency/app/dist
+          retention-days: 14
+
+  deploy_web:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_web
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pixel-agency-web
+          path: site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  build_apk:
+    if: github.event_name == 'workflow_dispatch' && inputs.build_apk
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Check EAS credentials
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ] || [ -z "$EAS_PROJECT_ID" ]; then
+            echo "::error::Defina o secret EXPO_TOKEN e a variável EAS_PROJECT_ID (veja agency/docs/BUILD-ANDROID.md)."
+            exit 1
+          fi
+      - name: Install agency deps
+        working-directory: agency
+        run: npx -y npm@11 ci
+      - name: Pin the EAS project id for the build worker
+        working-directory: agency/app
+        env:
+          EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+        run: echo "{\"expo\":{\"extra\":{\"eas\":{\"projectId\":\"$EAS_PROJECT_ID\"}}}}" > app.json
+      - name: Start EAS build (APK, perfil preview)
+        working-directory: agency/app
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+        run: npx -y eas-cli@latest build --platform android --profile preview --non-interactive --no-wait

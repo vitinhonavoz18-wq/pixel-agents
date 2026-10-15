@@ -1,11 +1,11 @@
-import type { ExpoConfig } from 'expo/config';
+import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 /**
  * PIXEL AGENCY — Expo config. No secrets here: the backend URL and the API
  * token are entered by the user in Config and kept in the device keystore
  * (expo-secure-store). EXPO_PUBLIC_AGENCY_URL only pre-fills the URL field.
  */
-const config: ExpoConfig = {
+const base: ExpoConfig = {
   name: 'PIXEL AGENCY',
   slug: 'pixel-agency',
   scheme: 'pixelagency',
@@ -79,11 +79,24 @@ const config: ExpoConfig = {
   ],
   experiments: {
     typedRoutes: false,
-  },
-  extra: {
-    defaultAgencyUrl: process.env.EXPO_PUBLIC_AGENCY_URL ?? '',
-    eas: process.env.EAS_PROJECT_ID ? { projectId: process.env.EAS_PROJECT_ID } : undefined,
+    // Set for sub-path hosting (e.g. GitHub Pages: /pixel-agents).
+    ...(process.env.EXPO_BASE_URL ? { baseUrl: process.env.EXPO_BASE_URL } : {}),
   },
 };
 
-export default config;
+/**
+ * The EAS project id is not secret but is account-specific: it comes from
+ * EAS_PROJECT_ID or from an app.json written by CI (`extra.eas.projectId`).
+ */
+export default ({ config }: ConfigContext): ExpoConfig => {
+  const projectId =
+    process.env.EAS_PROJECT_ID ??
+    (config.extra?.eas as { projectId?: string } | undefined)?.projectId;
+  return {
+    ...base,
+    extra: {
+      defaultAgencyUrl: process.env.EXPO_PUBLIC_AGENCY_URL ?? '',
+      ...(projectId ? { eas: { projectId } } : {}),
+    },
+  };
+};

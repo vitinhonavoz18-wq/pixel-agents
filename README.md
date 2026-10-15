@@ -6,6 +6,8 @@
 
 <h2 align="center">The most playful way to orchestrate your agents</h2>
 
+> **PIXEL AGENCY** — este fork também contém o PIXEL AGENCY: uma agência virtual de IA para Android, tablet e Web construída sobre o Pixel Agents. Veja [`agency/README.md`](agency/README.md) e [`AUDITORIA.md`](AUDITORIA.md).
+
 <div align="center">
 
 [![version](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fpablodelucca%2F3cd28398fa4a2c0a636e1d51d41aee39%2Fraw%2Fversion.json)](https://github.com/pixel-agents-hq/pixel-agents/releases)

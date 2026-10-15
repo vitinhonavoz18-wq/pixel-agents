@@ -4,6 +4,10 @@ Pixel art office where AI agents (Claude Code terminals today, any tool tomorrow
 
 `CONTEXT.md` is the canonical glossary — read it for what terms like Agent, Sub-agent, Teammate, Lead, Adopt, or Headless agent mean here, and use its vocabulary in code, comments, and docs.
 
+## PIXEL AGENCY (`agency/`)
+
+Separate npm workspace root (install with `npx npm@11 install` inside `agency/`; npm 10 hits an arborist peer-set bug) holding the PIXEL AGENCY product built on this repo: `shared/` (zod contracts, `OfficeSync` agency-state → office protocol), `backend/` (Fastify, mission queue, Claude Agent SDK executor, security policy, usage/branding/previews), `app/` (Expo Router, Android + Web), `desktop-bridge/`. The office is this repo's webview driven through `HostBridgeTransport` (`isAgencyEmbed`), built single-file by `webview-ui/vite.agency.config.ts` (`npm run office:build` in `agency/` → `agency/app/assets/office/office.html`, committed). Docs: `agency/README.md`, `agency/docs/`, `AUDITORIA.md`. Root `tsconfig`/lint/knip ignore `agency/`; its CI is `.github/workflows/agency.yml`.
+
 ## Architecture
 
 Strict layering: `core/` depends on nothing; `server/` depends only on `core/`; `webview-ui/` depends only on `core/`; `adapters/vscode/` depends on `core/` and `server/`. The standalone CLI never imports `adapters/vscode/` and vice versa.

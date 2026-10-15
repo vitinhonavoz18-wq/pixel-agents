@@ -1,6 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "tags": ["-internal"],
+  "tags": [
+    "-internal"
+  ],
   "ignoreDependencies": [
     "tailwindcss",
     "pngjs",
@@ -18,7 +20,8 @@
     "webview-ui/src/office/editor/index.ts",
     "webview-ui/src/office/engine/index.ts",
     "webview-ui/src/office/layout/index.ts",
-    "webview-ui/src/office/sprites/index.ts"
+    "webview-ui/src/office/sprites/index.ts",
+    "agency/**"
   ],
   "workspaces": {
     ".": {
@@ -46,7 +49,9 @@
     },
     "webview-ui": {
       "entry": [
-        "test/**/*.ts"
+        "test/**/*.ts",
+        "src/agency/main.tsx",
+        "vite.agency.config.ts"
       ],
       "project": [
         "src/**/*.{ts,tsx}"

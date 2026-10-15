@@ -127,6 +127,19 @@ export function extractBrand(
   const themeColors: Array<{ hex: string; source: string }> = [];
   for (const f of files) {
     const base = path.basename(f.rel).toLowerCase();
+    if (base === 'package.json' && !f.rel.includes('/')) {
+      // VS Code extensions / Electron apps declare their icon here.
+      try {
+        const j = JSON.parse(readText(f.abs)) as { icon?: unknown };
+        if (typeof j.icon === 'string') {
+          declaredIcons.add(path.posix.normalize(j.icon.replace(/^\.\//, '')));
+          sourceFiles.add(f.rel);
+        }
+      } catch {
+        // not JSON
+      }
+      continue;
+    }
     if (
       base === 'app.json' ||
       base === 'manifest.json' ||
@@ -342,8 +355,11 @@ export function extractBrand(
     if (fonts.size >= 12) break;
   }
 
+  // A real logo/icon always outranks a banner, whatever the raw scores.
+  const KIND_RANK: Record<string, number> = { logo: 0, icon: 1, favicon: 2, banner: 3 };
   const logoCandidates = candidates
     .filter((c) => c.kind !== 'screenshot' && c.kind !== 'image')
+    .sort((a, b) => (KIND_RANK[a.kind] ?? 9) - (KIND_RANK[b.kind] ?? 9) || b.score - a.score)
     .slice(0, 12);
   const screenshots = candidates.filter((c) => c.kind === 'screenshot').slice(0, 20);
   const primary = colors.find((c) => c.role === 'primary')?.hex ?? colors[0]?.hex;
