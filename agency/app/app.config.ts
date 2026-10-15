@@ -85,19 +85,23 @@ const base: ExpoConfig = {
   },
 };
 
+/** EAS project @vitinho157s-team/pixel-agency (an id, not a secret). */
+const EAS_PROJECT_ID = 'd9442883-caaf-47af-8266-440d3d8fc970';
+
 /**
- * The EAS project id is not secret but is account-specific: it comes from
- * EAS_PROJECT_ID or from an app.json written by CI (`extra.eas.projectId`).
+ * EAS_PROJECT_ID or an app.json written by CI (`extra.eas.projectId`) can
+ * point a fork at its own EAS project.
  */
 export default ({ config }: ConfigContext): ExpoConfig => {
   const projectId =
     process.env.EAS_PROJECT_ID ??
-    (config.extra?.eas as { projectId?: string } | undefined)?.projectId;
+    (config.extra?.eas as { projectId?: string } | undefined)?.projectId ??
+    EAS_PROJECT_ID;
   return {
     ...base,
     extra: {
       defaultAgencyUrl: process.env.EXPO_PUBLIC_AGENCY_URL ?? '',
-      ...(projectId ? { eas: { projectId } } : {}),
+      eas: { projectId },
     },
   };
 };
