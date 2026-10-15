@@ -11,7 +11,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "eas:preview": "eas build --platform android --profile preview",
-    "eas:production": "eas build --platform android --profile production"
+    "eas:production": "eas build --platform android --profile production",
+    "build:web:portable": "expo export --platform web --output-dir dist && node scripts/portable-web.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.17",

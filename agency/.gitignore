@@ -12,3 +12,4 @@ backend/workspaces/
 !.env.example
 android/
 ios/
+app/dist-portable/

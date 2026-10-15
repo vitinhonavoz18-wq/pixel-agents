@@ -1,5 +1,5 @@
 import { useAssets } from 'expo-asset';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import type { ClientMessage, ServerMessage } from '../../../../core/src/messages';
@@ -27,8 +27,22 @@ export function OfficeView() {
     return () => window.removeEventListener('message', listener);
   }, [onOfficeMessage]);
 
+  // Load the office as `srcdoc`: same-origin with the app, no navigation and
+  // no frame-src dependency on whatever host serves the web build.
   const src = assets?.[0]?.uri;
-  if (!src) {
+  const [html, setHtml] = useState<string | null>(null);
+  useEffect(() => {
+    if (!src) return;
+    let alive = true;
+    void fetch(src)
+      .then((r) => r.text())
+      .then((t) => alive && setHtml(t))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [src]);
+  if (!html) {
     return (
       <View
         style={{
@@ -45,7 +59,7 @@ export function OfficeView() {
   return (
     <iframe
       ref={frame}
-      src={src}
+      srcDoc={html}
       title="Escritório PIXEL AGENCY"
       // A reloaded frame re-sends webviewReady; reset the diff state first.
       onLoad={onReload}

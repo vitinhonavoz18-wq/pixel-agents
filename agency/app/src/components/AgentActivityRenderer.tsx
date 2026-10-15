@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { ACTIVITY_LABELS, type AgentActivityState, isWorking } from '@pixel-agency/shared';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
