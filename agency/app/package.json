@@ -1,6 +1,6 @@
 {
   "name": "@pixel-agency/app",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
@@ -17,7 +17,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~57.0.17",
     "@expo/vector-icons": "^15.0.2",
-    "@pixel-agency/shared": "0.1.0",
+    "@pixel-agency/shared": "1.0.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "57.0.29",
     "expo-asset": "~57.0.20",

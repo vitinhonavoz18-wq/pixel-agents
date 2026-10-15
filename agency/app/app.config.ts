@@ -9,7 +9,7 @@ const base: ExpoConfig = {
   name: 'PIXEL AGENCY',
   slug: 'pixel-agency',
   scheme: 'pixelagency',
-  version: '0.1.0',
+  version: '1.0.0',
   orientation: 'default',
   icon: './assets/icon.png',
   userInterfaceStyle: 'dark',

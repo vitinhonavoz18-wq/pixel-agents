@@ -58,7 +58,7 @@ import { UsageService } from './usage.js';
 import { newId, nowIso } from './util/ids.js';
 import { WorkspaceManager } from './workspaces.js';
 
-export const VERSION = '0.1.0';
+export const VERSION = '1.0.0';
 
 declare module 'fastify' {
   interface FastifyRequest {

@@ -1,6 +1,6 @@
 {
   "name": "@pixel-agency/desktop-bridge",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Connects local Pixel Agents (VS Code / standalone) and Claude Code statusline to the PIXEL AGENCY backend",
@@ -14,7 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pixel-agency/shared": "0.1.0",
+    "@pixel-agency/shared": "1.0.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

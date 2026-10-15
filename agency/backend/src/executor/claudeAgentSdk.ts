@@ -124,7 +124,7 @@ export class ClaudeAgentSdkExecutor implements AgentExecutor {
       if (v !== undefined) env[key] = v;
     }
     env.CLAUDE_CONFIG_DIR = this.opts.claudeConfigDir;
-    env.CLAUDE_AGENT_SDK_CLIENT_APP = 'pixel-agency-backend/0.1.0';
+    env.CLAUDE_AGENT_SDK_CLIENT_APP = 'pixel-agency-backend/1.0.0';
     return env;
   }
 

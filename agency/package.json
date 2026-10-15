@@ -1,7 +1,7 @@
 {
   "name": "pixel-agency",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "PIXEL AGENCY \u2014 virtual AI agency (Android, tablet, Web) built on Pixel Agents",
   "license": "MIT",
   "workspaces": [
