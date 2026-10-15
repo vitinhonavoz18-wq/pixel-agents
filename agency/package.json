@@ -2,13 +2,12 @@
   "name": "pixel-agency",
   "private": true,
   "version": "0.1.0",
-  "description": "PIXEL AGENCY — virtual AI agency (Android, tablet, Web) built on Pixel Agents",
+  "description": "PIXEL AGENCY \u2014 virtual AI agency (Android, tablet, Web) built on Pixel Agents",
   "license": "MIT",
   "workspaces": [
     "shared",
     "backend",
-    "desktop-bridge",
-    "app"
+    "desktop-bridge"
   ],
   "scripts": {
     "office:layout": "tsx office-layout/generateAgencyLayout.ts",

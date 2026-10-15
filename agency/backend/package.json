@@ -1,0 +1,30 @@
+{
+  "name": "@pixel-agency/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PIXEL AGENCY cloud backend: missions, Claude Agent SDK execution, events, usage, branding",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/server.js",
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.300",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/websocket": "^11.2.0",
+    "@pixel-agency/shared": "0.1.0",
+    "fastify": "^5.8.5",
+    "zod": "^4.1.0"
+  },
+  "optionalDependencies": {
+    "playwright-core": "^1.58.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.x",
+    "esbuild": "^0.28.0"
+  }
+}

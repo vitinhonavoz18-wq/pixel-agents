@@ -173,6 +173,8 @@ export const BrandAssetSchema = z.object({
   height: z.number().int().positive().optional(),
   /** Id in the backend asset cache, served at /api/assets/:assetId. */
   assetId: z.string().max(120).optional(),
+  /** Short-lived signed URL added by the backend when responding. */
+  url: z.string().optional(),
 });
 export type BrandAsset = z.infer<typeof BrandAssetSchema>;
 
@@ -232,6 +234,8 @@ export const ProjectPreviewSchema = z.object({
   createdAt: IsoDateSchema,
   /** Commit the image was found/captured at, for staleness detection. */
   commitSha: z.string().max(64).optional(),
+  /** Short-lived signed URL added by the backend when responding. */
+  url: z.string().optional(),
 });
 export type ProjectPreview = z.infer<typeof ProjectPreviewSchema>;
 

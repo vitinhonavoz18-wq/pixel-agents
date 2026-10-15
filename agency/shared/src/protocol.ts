@@ -1,3 +1,4 @@
+import type { ClientMessage, ServerMessage } from '../../../core/src/messages.js';
 import type {
   AgentProfile,
   AgentRuntimeState,
@@ -38,7 +39,16 @@ export type AgencyServerEvent =
   | { type: 'usageChanged' }
   | { type: 'alert'; alert: UsageAlert }
   | { type: 'capabilities'; capabilities: Capabilities }
-  | { type: 'pong'; ts: string };
+  | { type: 'pong'; ts: string }
+  /** Pixel Agents office messages relayed from the user's computer by the Desktop Bridge. */
+  | { type: 'desktop'; messages: ServerMessage[]; receivedAt: string }
+  | { type: 'desktopStatus'; connected: boolean; lastSeenAt?: string };
+
+/** Commands the app may queue for the Desktop Bridge to deliver to local Pixel Agents. */
+export type DesktopCommand = Extract<
+  ClientMessage,
+  { type: 'focusAgent' | 'closeAgent' | 'launchAgent' }
+>;
 
 /** Messages the app may send over the socket (actions go through REST). */
 export type AgencyClientEvent = { type: 'ping' };
