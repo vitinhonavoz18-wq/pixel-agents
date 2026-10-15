@@ -11,7 +11,7 @@ import type {
   ProjectBranding,
   ProjectPreview,
   UsageAlert,
-} from './schemas.js';
+} from './schemas';
 
 /** Events the backend pushes over `GET /api/ws`. */
 export type AgencyServerEvent =

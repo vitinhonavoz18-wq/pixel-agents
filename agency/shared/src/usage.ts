@@ -1,4 +1,4 @@
-import type { SubscriptionLimits, UsageTotals } from './schemas.js';
+import type { SubscriptionLimits, UsageTotals } from './schemas';
 
 export const EMPTY_USAGE: UsageTotals = {
   inputTokens: 0,

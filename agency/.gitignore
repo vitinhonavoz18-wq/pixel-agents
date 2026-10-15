@@ -10,3 +10,5 @@ backend/workspaces/
 .env
 .env.*
 !.env.example
+android/
+ios/

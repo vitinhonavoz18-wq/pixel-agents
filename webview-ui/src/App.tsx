@@ -361,7 +361,9 @@ function App() {
 
       {!isDebugMode ? (
         <>
-          <ZoomControls zoom={editor.zoom} onZoomChange={editor.handleZoomChange} />
+          {!isAgencyEmbed && (
+            <ZoomControls zoom={editor.zoom} onZoomChange={editor.handleZoomChange} />
+          )}
 
           {/* Vignette overlay */}
           <div
@@ -526,6 +528,8 @@ function App() {
         <AgencyEmbedToolbar
           isEditMode={editor.isEditMode}
           onToggleEditMode={editor.handleToggleEditMode}
+          zoom={editor.zoom}
+          onZoomChange={editor.handleZoomChange}
         />
       ) : (
         <>

@@ -1,4 +1,4 @@
-import type { AgentActivityState } from './schemas.js';
+import type { AgentActivityState } from './schemas';
 
 /** pt-BR labels for each operational state. */
 export const ACTIVITY_LABELS: Record<AgentActivityState, string> = {

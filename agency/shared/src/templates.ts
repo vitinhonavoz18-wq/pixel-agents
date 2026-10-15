@@ -1,5 +1,5 @@
-import type { DepartmentId } from './departments.js';
-import type { AgentInput } from './schemas.js';
+import type { DepartmentId } from './departments';
+import type { AgentInput } from './schemas';
 
 const TEMPLATE_NOTE =
   'Modelo inicial do PIXEL AGENCY. NÃO é uma cópia do agente configurado no seu computador — ' +

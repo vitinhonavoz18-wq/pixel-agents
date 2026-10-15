@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { DEPARTMENT_IDS } from './departments.js';
+import { DEPARTMENT_IDS } from './departments';
 
 /**
  * Typed contracts shared by the backend, the app (Android + Web) and the

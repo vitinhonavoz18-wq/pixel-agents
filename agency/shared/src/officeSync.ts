@@ -1,7 +1,7 @@
 import type { ClientMessage, ServerMessage } from '../../../core/src/messages.js';
-import { isWorking, OFFICE_READING_TOOLS, officeToolForActivity } from './activity.js';
-import { DEPARTMENTS, getDepartment } from './departments.js';
-import type { AgentActivityState, AgentProfile, AgentRuntimeState } from './schemas.js';
+import { isWorking, OFFICE_READING_TOOLS, officeToolForActivity } from './activity';
+import { DEPARTMENTS, getDepartment } from './departments';
+import type { AgentActivityState, AgentProfile, AgentRuntimeState } from './schemas';
 
 /** Folder key an agent is filed under; mapped to its department Area. */
 export function departmentFolder(departmentId: string): string {

@@ -1,5 +1,5 @@
-import { DEPARTMENT_IDS, type DepartmentId } from './departments.js';
-import { AgentInputSchema, type AgentInput } from './schemas.js';
+import { DEPARTMENT_IDS, type DepartmentId } from './departments';
+import { AgentInputSchema, type AgentInput } from './schemas';
 
 export interface ImportResult {
   ok: boolean;
