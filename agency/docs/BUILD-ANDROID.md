@@ -52,4 +52,5 @@ Permissões: `INTERNET` e `POST_NOTIFICATIONS` (alertas de aprovação/consumo).
 
 - `npx expo-doctor`: 21/21 verificações OK.
 - `npx expo prebuild --platform android`: gera o projeto nativo sem erros (pasta não versionada; o EAS/CI a gera no build).
-- Build EAS: depende do projeto no expo.dev (passos acima) — a integração Expo disponível aqui só dispara builds de projetos já existentes e conectados ao GitHub.
+- Build EAS `preview` concluído em 2026-10-15 no projeto `@vitinho157s-team/pixel-agency` (build `dac5accb-2b0f-4a36-957f-3413802c0ac6`).
+- Job `android_apk` (GitHub Actions) concluído: Release `agency-v1.0.0` com `pixel-agency-1.0.0.apk`.

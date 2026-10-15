@@ -47,12 +47,12 @@ Legenda: ✅ implementado e testado · 🟢 implementado, validado manualmente/v
 
 ## Plataformas e entrega
 
-| Item             | Status | Evidência / observação                                                                                                                                                                                                           |
-| ---------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Versão web       | 🟢     | `expo export` + testes no Chromium (DEMO); deploy opcional no GitHub Pages via workflow                                                                                                                                          |
-| APK Android      | 🟡     | `eas.json` (preview = APK), `expo-doctor` 21/21, `expo prebuild` OK; job `android_apk` (GitHub Actions) gera o APK e publica a Release `agency-v1.0.0`; build EAS depende de criar o projeto no expo.dev (docs/BUILD-ANDROID.md) |
-| Backend em nuvem | 🟡     | Dockerfile pronto; precisa de hospedagem autorizada por você (docs/DEPLOY-BACKEND.md)                                                                                                                                            |
-| Desktop Bridge   | ✅/🟡  | testes unitários; ainda não executado contra um Pixel Agents local real                                                                                                                                                          |
+| Item             | Status | Evidência / observação                                                                                                                                                                                                                                                                                                       |
+| ---------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Versão web       | 🟢     | `expo export` + testes no Chromium (DEMO); deploy opcional no GitHub Pages via workflow                                                                                                                                                                                                                                      |
+| APK Android      | ✅     | **build EAS concluído** (`@vitinho157s-team/pixel-agency`, perfil `preview`, build `dac5accb`): https://expo.dev/accounts/vitinho157s-team/projects/pixel-agency/builds/dac5accb-2b0f-4a36-957f-3413802c0ac6 · também via GitHub Actions (`android_apk`) na Release `agency-v1.0.0`. Ainda não testado em dispositivo físico |
+| Backend em nuvem | 🟡     | Dockerfile pronto; precisa de hospedagem autorizada por você (docs/DEPLOY-BACKEND.md)                                                                                                                                                                                                                                        |
+| Desktop Bridge   | ✅/🟡  | testes unitários; ainda não executado contra um Pixel Agents local real                                                                                                                                                                                                                                                      |
 
 ## Testes executados
 
