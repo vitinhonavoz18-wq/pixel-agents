@@ -1,0 +1,103 @@
+{
+  "arquivo": "output/quiz-verao-farmacia-preco-bom.mp4",
+  "aprovado": true,
+  "tamanho_mb": 6.72,
+  "checks": {
+    "resolucao": {
+      "ok": true,
+      "valor": "1080x1920",
+      "esperado": "1080x1920"
+    },
+    "codec_video": {
+      "ok": true,
+      "valor": "h264",
+      "esperado": "h264"
+    },
+    "fps": {
+      "ok": true,
+      "valor": "30/1",
+      "esperado": "30/1"
+    },
+    "frames": {
+      "ok": true,
+      "valor": 540,
+      "esperado": 540
+    },
+    "duracao_video_s": {
+      "ok": true,
+      "valor": 18,
+      "esperado": 18
+    },
+    "audio_presente": {
+      "ok": true,
+      "valor": "aac 48000Hz 2ch",
+      "esperado": "aac"
+    },
+    "audio_nao_silencioso": {
+      "ok": true,
+      "valor": "-19.6 dB média",
+      "esperado": "> -40 dB"
+    },
+    "sem_clipping": {
+      "ok": true,
+      "valor": "pico -0.8 dB / true peak -0.8 dBFS",
+      "esperado": "< 0 dB"
+    },
+    "loudness": {
+      "ok": true,
+      "valor": "-15.6 LUFS",
+      "esperado": "entre -20 e -9 LUFS (Reels ~ -14)"
+    },
+    "falas_terminam_antes_do_fim": {
+      "ok": true,
+      "valor": [
+        {
+          "fala": "hook",
+          "inicio_s": 0.03,
+          "fim_s": 1.5
+        },
+        {
+          "fala": "question",
+          "inicio_s": 1.77,
+          "fim_s": 3.91
+        },
+        {
+          "fala": "reveal",
+          "inicio_s": 8.93,
+          "fim_s": 12.47
+        },
+        {
+          "fala": "tip",
+          "inicio_s": 12.5,
+          "fim_s": 15.91
+        },
+        {
+          "fala": "cta",
+          "inicio_s": 16,
+          "fim_s": 17.88
+        }
+      ],
+      "esperado": "todas <= 18 s"
+    },
+    "falas_nao_se_sobrepoem": {
+      "ok": true,
+      "valor": "checado em sequência",
+      "esperado": "sem sobreposição"
+    },
+    "contagem_5s": {
+      "ok": true,
+      "valor": "5 s (3.9s → 8.9s)",
+      "esperado": "5 s, 1 s por número"
+    },
+    "resposta_correta_B": {
+      "ok": true,
+      "valor": "Sombra + chapéu + FPS 30+",
+      "esperado": "B — Sombra + chapéu + FPS 30+"
+    },
+    "sem_legenda_na_contagem": {
+      "ok": true,
+      "valor": "checado",
+      "esperado": "nenhuma legenda entre 3,9 s e 8,9 s"
+    }
+  }
+}
