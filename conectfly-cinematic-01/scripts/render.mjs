@@ -12,7 +12,7 @@ const val = (f) => (args.indexOf(f) >= 0 ? args[args.indexOf(f) + 1] : undefined
 const browserExecutable = existsSync('/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell')
   ? '/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell'
   : undefined;
-const outDir = path.join(root, 'output');
+const outDir = path.join(root, process.env.OUT_DIR ?? 'output');
 mkdirSync(outDir, {recursive: true});
 
 const serveUrl = await bundle({entryPoint: path.join(root, 'src/index.ts'), publicDir: path.join(root, 'public')});
