@@ -1,0 +1,40 @@
+{
+  "_doc": "Fonte única de tempo (segundos). Usada pelo vídeo (Remotion) e pelo gerador de áudio (scripts/make_audio.py).",
+  "fps": 30,
+  "duration": 30,
+  "scenes": {
+    "opening": [0, 4],
+    "messages": [4, 9],
+    "conversation": [9, 16],
+    "handoff": [16, 21],
+    "dawn": [21, 26],
+    "finale": [26, 30]
+  },
+  "voice": [0.55, 4.25, 9.6, 16.5, 21.35, 26.2],
+  "sfx": {
+    "vibrate": [1.25, 1.95],
+    "notify": [4.7, 5.9, 7.1, 9.5, 11.9, 16.4],
+    "reply": [10.7, 12.9, 17.4],
+    "tick": [5.25, 6.45, 7.65, 11.2, 12.5, 13.8, 18.4, 22.2, 22.8, 23.4],
+    "whoosh": [3.85, 8.85, 15.85, 20.85],
+    "handoff": [19.3],
+    "riser": [24.2, 26.0],
+    "impact": [26.0],
+    "signature": [26.75]
+  },
+  "messages": {
+    "m1": 4.7,
+    "m2": 5.9,
+    "m3": 7.1,
+    "c1": 9.5,
+    "a1": 10.7,
+    "c2": 11.9,
+    "a2": 12.9,
+    "panel": [11.2, 12.5, 13.8],
+    "h1": 16.4,
+    "h2": 17.4,
+    "hStatus": 18.4,
+    "hArrive": 19.3,
+    "dash": [22.2, 22.8, 23.4]
+  }
+}
